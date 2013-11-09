@@ -334,37 +334,37 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 #endif
 
 // Travel limits after homing
-#define X_MAX_POS 123.3
-#define X_MIN_POS 0
+#define X_MAX_POS 153.3
+#define X_MIN_POS -30.0
 #define Y_MAX_POS 375.5
-#define Y_MIN_POS 0
+#define Y_MIN_POS -14.0
 #define Z_MAX_POS 95.0
-#define Z_MIN_POS 0
+#define Z_MIN_POS -16.0
 
 #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
 #define Y_MAX_LENGTH (Y_MAX_POS - Y_MIN_POS)
 #define Z_MAX_LENGTH (Z_MAX_POS - Z_MIN_POS)
 
 // The position of the homing switches
-//#define MANUAL_HOME_POSITIONS  // If defined, MANUAL_*_HOME_POS below will be used
+#define MANUAL_HOME_POSITIONS  // If defined, MANUAL_*_HOME_POS below will be used
 //#define BED_CENTER_AT_0_0  // If defined, the center of the bed is at (X=0, Y=0)
 
 //Manual homing switch locations:
 // For deltabots this means top and center of the cartesian print volume.
-#define MANUAL_X_HOME_POS 0
+#define MANUAL_X_HOME_POS 123.3
 #define MANUAL_Y_HOME_POS 0
 #define MANUAL_Z_HOME_POS 0
 //#define MANUAL_Z_HOME_POS 402 // For delta: Distance between nozzle and print surface after homing.
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
-#define HOMING_FEEDRATE {50*60, 50*60, 50*60, 0}  // set the homing speeds (mm/min)
+#define HOMING_FEEDRATE {100*60, 100*60, 100*60, 0}  // set the homing speeds (mm/min)
 
 // default settings
 
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {46.3000,46.3000,46.3000,203.72*1.1}  // default steps per unit for Ultimaker
-#define DEFAULT_MAX_FEEDRATE          {30, 150, 100, 25}    // (mm/sec)
-#define DEFAULT_MAX_ACCELERATION      {150,3000,2000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
+#define DEFAULT_MAX_FEEDRATE          {150, 150, 150, 25}    // (mm/sec)
+#define DEFAULT_MAX_ACCELERATION      {150,2000,200,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
 #define DEFAULT_ACCELERATION          2000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  2000   // X, Y, Z and E max acceleration in mm/s^2 for retracts
