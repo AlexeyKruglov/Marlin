@@ -128,18 +128,20 @@
 // The minimal temperature defines the temperature below which the heater will not be enabled It is used
 // to check that the wiring to the thermistor is not broken.
 // Otherwise this would lead to the heater being powered on all the time.
-//#define HEATER_0_MINTEMP 5
+#define HEATER_0_MINTEMP 5
 #define HEATER_1_MINTEMP 5
 #define HEATER_2_MINTEMP 5
 #define BED_MINTEMP 5
 
-// Remove later!!!
-#define HEATER_0_MINTEMP 0
+// AK: Remove later!!!
+//#define HEATER_0_MINTEMP 0
 
 // When temperature exceeds max temp, your heater will be switched off.
 // This feature exists to protect your hotend from overheating accidentally, but *NOT* from thermistor short/failure!
 // You should use MINTEMP for thermistor short/failure protection.
-#define HEATER_0_MAXTEMP 250
+// #define HEATER_0_MAXTEMP 250
+// AK: T_sensor=~~210 C for T_apex=250 C (extrapolated)
+#define HEATER_0_MAXTEMP 210
 #define HEATER_1_MAXTEMP 275
 #define HEATER_2_MAXTEMP 275
 #define BED_MAXTEMP 150
@@ -152,22 +154,42 @@
 // PID settings:
 // Comment the following line to disable PID and enable bang-bang.
 #define PIDTEMP
-#define BANG_MAX 255 // limits current to nozzle while in bang-bang mode; 255=full current
-#define PID_MAX 255 // limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
+#define BANG_MAX 57 // limits current to nozzle while in bang-bang mode; 255=full current
+#define PID_MAX 57 // limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
 #ifdef PIDTEMP
   //#define PID_DEBUG // Sends debug data to the serial port.
   //#define PID_OPENLOOP 1 // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
-  #define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperature
+  #define PID_FUNCTIONAL_RANGE 10
+  #define PID_FUNCTIONAL_RANGE_UP 15
+  #define PID_FUNCTIONAL_RANGE_DOWN 30 // If the temperature difference between the target temperature and the actual temperature
                                   // is more then PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
-  #define PID_INTEGRAL_DRIVE_MAX 255  //limit for the integral term
+  #define PID_INTEGRAL_DRIVE_MAX PID_MAX  //limit for the integral term
   #define K1 0.95 //smoothing factor within the PID
   #define PID_dT ((16.0 * 8.0)/(F_CPU / 64.0 / 256.0)) //sampling period of the temperature routine
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
+// AK cone hotend
+//    #define  DEFAULT_Kp 1.5
+//    #define  DEFAULT_Ki 0.25
+//    #define  DEFAULT_Kd 2.3
+    // ^^^^^ for PID_MAX==12, T=65 C
+//    #define  DEFAULT_Kp 2.4
+//    #define  DEFAULT_Ki 0.5
+//    #define  DEFAULT_Kd 3.1
+    // ^^^^^ for PID_MAX==19, T=80 C
+//    #define  DEFAULT_Kp 2.0
+//    #define  DEFAULT_Ki 0.4
+//    #define  DEFAULT_Kd 2.5
+    // ^^^^^ for PID_MAX==19, T=85 C, after repairing cone heater
+    #define  DEFAULT_Kp 2.1
+    #define  DEFAULT_Ki 0.4
+    #define  DEFAULT_Kd 2.7
+    // ^^^^^ for PID_MAX==37, T=205 C (Ts=168 C)
+
 // Ultimaker
-    #define  DEFAULT_Kp 22.2
-    #define  DEFAULT_Ki 1.08
-    #define  DEFAULT_Kd 114
+//    #define  DEFAULT_Kp 22.2
+//    #define  DEFAULT_Ki 1.08
+//    #define  DEFAULT_Kd 114
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -224,7 +246,9 @@
 //if PREVENT_DANGEROUS_EXTRUDE is on, you can still disable (uncomment) very long bits of extrusion separately.
 #define PREVENT_LENGTHY_EXTRUDE
 
-#define EXTRUDE_MINTEMP 170
+// AK: #define EXTRUDE_MINTEMP 170
+// t_sensor=137 C, when t_apex=170 C
+#define EXTRUDE_MINTEMP 137
 #define EXTRUDE_MAXLENGTH (X_MAX_LENGTH+Y_MAX_LENGTH) //prevent extrusion of very large distances.
 
 //===========================================================================
@@ -335,8 +359,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 
 // Travel limits after homing
 #define X_MAX_POS 153.3
-#define X_MIN_POS -30.0
-#define Y_MAX_POS 375.5
+#define X_MIN_POS -50.0
+#define Y_MAX_POS 350.0
+// define Y_MAX_POS 375.5 
 #define Y_MIN_POS -14.0
 #define Z_MAX_POS 95.0
 #define Z_MIN_POS -16.0
@@ -358,16 +383,16 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
-#define HOMING_FEEDRATE {100*60, 100*60, 100*60, 0}  // set the homing speeds (mm/min)
+#define HOMING_FEEDRATE {100*60, 100*60, 30*60, 0}  // set the homing speeds (mm/min)
 
 // default settings
 
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {46.3000,46.3000,46.3000,203.72*1.1}  // default steps per unit for Ultimaker
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {46.3000,46.3000,46.3000,203.72*1.1/1.3}  // default steps per unit for AK RepStrap
 #define DEFAULT_MAX_FEEDRATE          {150, 150, 150, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {150,2000,200,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
-#define DEFAULT_ACCELERATION          2000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
-#define DEFAULT_RETRACT_ACCELERATION  2000   // X, Y, Z and E max acceleration in mm/s^2 for retracts
+#define DEFAULT_ACCELERATION          200    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
+#define DEFAULT_RETRACT_ACCELERATION  200   // X, Y, Z and E max acceleration in mm/s^2 for retracts
 
 // Offset of the extruders (uncomment if using more than one and relying on firmware to position when changing).
 // The offset has to be X=0, Y=0 for the extruder 0 hotend (default extruder).
