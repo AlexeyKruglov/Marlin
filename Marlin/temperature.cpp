@@ -1122,7 +1122,18 @@ ISR(TIMER0_COMPB_vect)
   static unsigned char soft_pwm_b;
   #endif
   
-  if(pwm_count == 0){
+  if(pwm_count < (1 << SOFT_PWM_SCALE)){
+    #if SOFT_PWM_SCALE>0
+    {  // Dither lower bits:  increment reverse-bit value of the last SOFT_PWM_SCALE bits in pwm_count
+      unsigned char bit = 1 << (SOFT_PWM_SCALE-1);
+      while((pwm_count & bit) != 0) { // It makes 1 loop iteration on average
+        pwm_count ^= bit;
+        bit >>= 1;
+      }
+      pwm_count ^= bit;
+    }
+    #endif
+
     soft_pwm_0 = soft_pwm[0];
     if(soft_pwm_0 > 0) { 
       WRITE(HEATER_0_PIN,1);
@@ -1130,7 +1141,7 @@ ISR(TIMER0_COMPB_vect)
       WRITE(HEATER_1_PIN,1);
       #endif
     } else WRITE(HEATER_0_PIN,0);
-	
+
     #if EXTRUDERS > 1
     soft_pwm_1 = soft_pwm[1];
     if(soft_pwm_1 > 0) WRITE(HEATER_1_PIN,1); else WRITE(HEATER_1_PIN,0);
