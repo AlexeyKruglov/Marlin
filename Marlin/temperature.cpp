@@ -1055,22 +1055,22 @@ ISR(TIMER0_COMPB_vect)
   static unsigned long raw_temp_2_value = 0;
   static unsigned long raw_temp_bed_value = 0;
   static unsigned char temp_state = 8;
-  static unsigned char pwm_count = (1 << SOFT_PWM_SCALE);
-  static unsigned char soft_pwm_0;
+  static unsigned int pwm_count = 0;
+  static unsigned int soft_pwm_0;
   #if (EXTRUDERS > 1) || defined(HEATERS_PARALLEL)
-  static unsigned char soft_pwm_1;
+  static unsigned int soft_pwm_1;
   #endif
   #if EXTRUDERS > 2
-  static unsigned char soft_pwm_2;
+  static unsigned int soft_pwm_2;
   #endif
   #if HEATER_BED_PIN > -1
-  static unsigned char soft_pwm_b;
+  static unsigned int soft_pwm_b;
   #endif
   
-  if(pwm_count < (1 << SOFT_PWM_SCALE)){
-    #if SOFT_PWM_SCALE>0
+  if(pwm_count < (1 << (8+SOFT_PWM_SCALE))){
+    #if SOFT_PWM_SCALE>-8
     {  // Dither lower bits:  increment reverse-bit value of the last SOFT_PWM_SCALE bits in pwm_count
-      unsigned char bit = 1 << (SOFT_PWM_SCALE-1);
+      unsigned int bit = 1 << (8+SOFT_PWM_SCALE-1);
       while((pwm_count & bit) != 0) { // It makes 1 loop iteration on average
         pwm_count ^= bit;
         bit >>= 1;
@@ -1079,8 +1079,8 @@ ISR(TIMER0_COMPB_vect)
     }
     #endif
 
-    soft_pwm_0 = soft_pwm[0];
-    if(soft_pwm_0 > 0) { 
+    soft_pwm_0 = (unsigned int)soft_pwm[0] << (8-SOFT_PWM_DECIMATE_HEATER_0);
+    if(soft_pwm_0 > 0) {
       WRITE(HEATER_0_PIN,1);
       #ifdef HEATERS_PARALLEL
       WRITE(HEATER_1_PIN,1);
@@ -1088,15 +1088,15 @@ ISR(TIMER0_COMPB_vect)
     } else WRITE(HEATER_0_PIN,0);
 
     #if EXTRUDERS > 1
-    soft_pwm_1 = soft_pwm[1];
+    soft_pwm_1 = soft_pwm[1] << 8;
     if(soft_pwm_1 > 0) WRITE(HEATER_1_PIN,1); else WRITE(HEATER_1_PIN,0);
     #endif
     #if EXTRUDERS > 2
-    soft_pwm_2 = soft_pwm[2];
+    soft_pwm_2 = soft_pwm[2] << 8;
     if(soft_pwm_2 > 0) WRITE(HEATER_2_PIN,1); else WRITE(HEATER_2_PIN,0);
     #endif
     #if defined(HEATER_BED_PIN) && HEATER_BED_PIN > -1
-    soft_pwm_b = soft_pwm_bed;
+    soft_pwm_b = soft_pwm_bed << 8;
     if(soft_pwm_b > 0) WRITE(HEATER_BED_PIN,1); else WRITE(HEATER_BED_PIN,0);
     #endif
     #ifdef FAN_SOFT_PWM
@@ -1123,8 +1123,8 @@ ISR(TIMER0_COMPB_vect)
   if(soft_pwm_fan <= pwm_count) WRITE(FAN_PIN,0);
   #endif
   
-  pwm_count += (1 << SOFT_PWM_SCALE);
-  pwm_count &= 0x7f;
+  pwm_count += 1 << (SOFT_PWM_SCALE+8);
+  pwm_count &= 0x7fff;
   
   switch(temp_state) {
     case 0: // Prepare TEMP_0
