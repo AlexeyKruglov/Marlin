@@ -721,6 +721,11 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // Heating of heater key (large MOSFET near heater terminals) may increase due to high switching rate.
 #define SOFT_PWM_SCALE 0
 
+// Decimate maximum PWM duty cycle for heater #0 (to increase PWM resolution for low-power heaters).
+// If SOFT_PWM_DECIMATE_...!=0, soft_pwm[0]=128 will correspond to 1/pow(2, SOFT_PWM_DECIMATE_...)
+// fraction of maximum power. For full power range set SOFT_PWM_DECIMATE_... to 0.
+#define SOFT_PWM_DECIMATE_HEATER_0 0
+
 // M240  Triggers a camera by emulating a Canon RC-1 Remote
 // Data from: http://www.doc-diy.net/photo/rc-1_hacked/
 // #define PHOTOGRAPH_PIN     23
