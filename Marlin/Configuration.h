@@ -708,10 +708,11 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 // is too low, you should also increment SOFT_PWM_SCALE.
 //#define FAN_SOFT_PWM
 
-// Incrementing this by 1 will double the software PWM frequency,
+// Incrementing this by 1 will double the software PWM frequency (switching rate),
 // affecting heaters, and the fan if FAN_SOFT_PWM is enabled.
-// However, control resolution will be halved for each increment;
-// at zero value, there are 128 effective control positions.
+// Control resolution doesn't depend on SOFT_PWM_SCALE;
+// there are 128 effective control positions for each value.
+// Heating of heater key (large MOSFET near heater terminals) may increase due to high switching rate.
 #define SOFT_PWM_SCALE 0
 
 // M240  Triggers a camera by emulating a Canon RC-1 Remote
