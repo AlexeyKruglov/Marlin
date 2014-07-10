@@ -181,8 +181,8 @@
 // PID settings:
 // Comment the following line to disable PID and enable bang-bang.
 #define PIDTEMP
-#define BANG_MAX 57 // limits current to nozzle while in bang-bang mode; 255=full current
-#define PID_MAX 57 // limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
+#define BANG_MAX (57*4) // limits current to nozzle while in bang-bang mode; 255=full current
+#define PID_MAX (57*4) // limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
 #ifdef PIDTEMP
   //#define PID_DEBUG // Sends debug data to the serial port.
   //#define PID_OPENLOOP 1 // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
@@ -210,10 +210,17 @@
 //    #define  DEFAULT_Ki 0.4
 //    #define  DEFAULT_Kd 2.5
     // ^^^^^ for PID_MAX==19, T=85 C, after repairing cone heater
-    #define  DEFAULT_Kp 2.1
-    #define  DEFAULT_Ki 0.4
-    #define  DEFAULT_Kd 2.7
+//    #define  DEFAULT_Kp 2.1
+//    #define  DEFAULT_Ki 0.4
+//    #define  DEFAULT_Kd 2.7
     // ^^^^^ for PID_MAX==37, T=205 C (Ts=168 C)
+//    #define  DEFAULT_Kp 9.8
+//    #define  DEFAULT_Ki 1.9
+//    #define  DEFAULT_Kd 10.8
+    #define  DEFAULT_Kp 12.0
+    #define  DEFAULT_Ki 1.9
+    #define  DEFAULT_Kd 20.0
+    // ^^^^^ for PID_MAX==57*4, SOFT_PWM_DECIM=2, T=205 C (Ts=168 C), manually fixed to get rid of oscillations
 
 // Ultimaker
 //    #define  DEFAULT_Kp 22.2
@@ -475,7 +482,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 
 // default settings
 
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {46.3000,46.3000,46.3000,203.72*1.1/1.3}  // default steps per unit for AK RepStrap
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {46.3000,46.3000,46.3000,203.72*1.02}  // default steps per unit for AK RepStrap
 #define DEFAULT_MAX_FEEDRATE          {150, 150, 150, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {150,2000,200,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for Skeinforge 40+, for older versions raise them a lot.
 
@@ -713,12 +720,12 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 // Control resolution doesn't depend on SOFT_PWM_SCALE;
 // there are 128 effective control positions for each value.
 // Heating of heater key (large MOSFET near heater terminals) may increase due to high switching rate.
-#define SOFT_PWM_SCALE 0
+#define SOFT_PWM_SCALE 2
 
 // Decimate maximum PWM duty cycle for heater #0 (to increase PWM resolution for low-power heaters).
 // If SOFT_PWM_DECIMATE_...!=0, soft_pwm[0]=128 will correspond to 1/pow(2, SOFT_PWM_DECIMATE_...)
 // fraction of maximum power. For full power range set SOFT_PWM_DECIMATE_... to 0.
-#define SOFT_PWM_DECIMATE_HEATER_0 0
+#define SOFT_PWM_DECIMATE_HEATER_0 2
 
 // M240  Triggers a camera by emulating a Canon RC-1 Remote
 // Data from: http://www.doc-diy.net/photo/rc-1_hacked/
